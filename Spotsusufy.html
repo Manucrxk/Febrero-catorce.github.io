@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>SpotSusufy</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+body{
+  font-family:Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:white;
+
+  background: linear-gradient(
+      rgba(0,0,0,0.45),
+      rgba(0,0,0,0.45)
+    ),
+    url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP9-hIFpCraH4WFQjkgz1lvdF_CzH97bXxz5wd6mYILA&s=10");
+
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-attachment:fixed;
+  background-color:#f7fffb;
+}
+
+.player{
+  width:320px;
+  text-align:center;
+}
+
+/* Título bonito */
+.titulo{
+  font-family:'Pacifico', cursive;
+  font-size:34px;
+}
+
+.cover{
+  width:220px;
+  height:220px;
+  object-fit:cover;
+  border-radius:10px;
+  margin-bottom:10px;
+  background:#ddd;
+}
+
+.song{
+  margin:8px 0;
+  font-weight:bold;
+}
+
+input[type="range"]{
+  width:100%;
+}
+
+.controls{
+  margin-top:15px;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+}
+
+button{
+  border:none;
+  background:none;
+  font-size:28px;
+  cursor:pointer;
+  color:white;
+}
+
+.play{
+  width:70px;
+  height:70px;
+  border:5px solid white;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:28px;
+  background:rgba(255,255,255,0.2);
+}
+</style>
+</head>
+
+<body>
+
+<div class="player">
+
+<h2 class="titulo">SpotSusufy 🤍</h2>
+
+<img id="cover" class="cover" src="">
+
+<div class="song" id="songName"></div>
+
+<input type="range" id="progress" value="0">
+
+<div class="controls">
+<button onclick="prevSong()">⏮</button>
+<button class="play" onclick="playPause()" id="playBtn">▶</button>
+<button onclick="nextSong()">⏭</button>
+</div>
+
+<audio id="audio"></audio>
+
+</div>
+
+<script>
+/* --- TU SCRIPT ORIGINAL SIN CAMBIOS --- */
+const songs = [
+{name:"Amor", file:"Audio/Amor.mp3", cover:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS91CH7Rz1yjV7dHq1jXRf-04vyb4PH0NFIJzVQfPbdCQ&s=10"},
+{name:"Eres", file:"Audio/Eres.mp3", cover:"Audio/Teamo.jpg"},
+{name:"Hasta la muerte", file:"Audio/Hasta la muerte.mp3", cover:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoc6MjZ4rq62YRVgaI5gye896LP4WCXt9pPcJVoNfVdw&s"},
+{name:"My one and only love", file:"Audio/My one and only love.mp3", cover:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSOXc4ypjSm1A5UrcROu8yO1OlB6U99QWZze169vUPdh7N30ZAGFxUKCI&s=10"},
+{name:"Natural", file:"Audio/Natural - Niño Condor, Joaz.mp3", cover:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLLdB9aYss4c325BywzQaIx9446mOgHdrY1r5n-8o54J0uJ-fgnph3pDk&s"},
+{name:"Por ti", file:"Audio/Por ti.mp3", cover:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSprwwJpFSNc6hyp7fSPp-S3vZNHhilDOQ4yyITYb3Dww&s=10"},
+{name:"Por vos", file:"Audio/Por vos.mp3", cover:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQyIu0UvKbPvtHRxlJH5_-t3OyG9mjRcoQs_wllIUv4w&s=10"},
+{name:"Q belleza de mujer", file:"Audio/Q belleza de mujer.mp3", cover:"Audio/Guapa.jpg"},
+{name:"Se Me Antoja", file:"Audio/Se Me Antoja.mp3", cover:"Audio/Hermosa.jpg"},
+{name:"Sexto sentido", file:"Audio/Sexto sentido.mp3", cover:"Audio/Linda.jpg"}
+];
+
+let index = 0;
+const audio = document.getElementById("audio");
+const progress = document.getElementById("progress");
+const songName = document.getElementById("songName");
+const playBtn = document.getElementById("playBtn");
+const cover = document.getElementById("cover");
+
+function loadSong(){
+audio.src = songs[index].file;
+songName.innerText = songs[index].name;
+cover.src = songs[index].cover;
+}
+
+function playPause(){
+if(audio.paused){
+audio.play();
+playBtn.innerText = "⏸";
+}else{
+audio.pause();
+playBtn.innerText = "▶";
+}
+}
+
+function nextSong(){
+index = (index + 1) % songs.length;
+loadSong();
+audio.play();
+playBtn.innerText = "⏸";
+}
+
+function prevSong(){
+index = (index - 1 + songs.length) % songs.length;
+loadSong();
+audio.play();
+playBtn.innerText = "⏸";
+}
+
+audio.addEventListener("timeupdate", () => {
+progress.value = (audio.currentTime / audio.duration) * 100 || 0;
+});
+
+progress.addEventListener("input", () => {
+audio.currentTime = (progress.value / 100) * audio.duration;
+});
+
+audio.addEventListener("ended", nextSong);
+
+window.addEventListener("beforeunload", () => {
+audio.pause();
+audio.src = "";
+});
+
+loadSong();
+</script>
+
+</body>
+</html>
